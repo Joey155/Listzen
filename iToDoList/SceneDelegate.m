@@ -6,6 +6,7 @@
 //
 
 #import "SceneDelegate.h"
+#import "ViewController.h"
 
 @interface SceneDelegate ()
 
@@ -13,11 +14,29 @@
 
 @implementation SceneDelegate
 
+@synthesize viewController;
 
 - (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
     // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
     // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
     // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
+    
+    // Set up application window and scene
+    UIWindowScene *windowScene = (UIWindowScene*) scene;
+    _window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    ViewController* initialViewController = [[ViewController alloc] init];
+    UINavigationController* navController = [[UINavigationController alloc]
+                                             initWithRootViewController:initialViewController];
+    _window.rootViewController = navController;
+    [_window makeKeyAndVisible];
+    _window.windowScene = windowScene;
+    
+    // allocate the imported viewController
+    viewController = [[ViewController alloc] init];
+    
+    //Add the view controller view to the window
+    [_window addSubview: [viewController view]];
+    _window.backgroundColor = [UIColor whiteColor];
 }
 
 
@@ -52,6 +71,7 @@
     // Use this method to save data, release shared resources, and store enough scene-specific state information
     // to restore the scene back to its current state.
 }
+
 
 
 @end
