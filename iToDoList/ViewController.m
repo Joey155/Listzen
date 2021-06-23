@@ -18,10 +18,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    // create an array for tasks
+    self.tasks = [NSMutableArray array];
+    
     // Do any additional setup after loading the view.
     // Define the frame rectangles of the three UI elements
     // CGRectMake() creates a CGRect from (x, y, width, height)
-    
     CGRect winFrame = [[UIScreen mainScreen] bounds];
     CGRect tableFrame = CGRectMake(0, 100, winFrame.size.width, winFrame.size.height-100);
     CGRect fieldFrame = CGRectMake(20, 40, 200, 31);
@@ -31,6 +34,7 @@
     self.taskTable = [[UITableView alloc] initWithFrame:tableFrame
                                                   style: UITableViewStylePlain];
     self.taskTable.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.taskTable.dataSource = self;
     
     //Tell the table view which class to instantiate whenever it needs to create a new cell
     [self.taskTable registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
@@ -59,7 +63,32 @@
     
 }
 
+#pragma mark - Table View management
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    // Because this table view only has one section
+    // the number of rows in it will just be the number items
+    // In the task array.
+    return [self.tasks count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
+{
+    // Check for and reuse an existing cell or create a new one if there isn't
+    UITableViewCell *cell = [self.taskTable dequeueReusableCellWithIdentifier:@"Cell"];
+    
+    // configure the cell based on the model object.
+    // In this case I am using am using an array
+    // tasks is an NSMutableArray Object
+    NSString *item = [self.tasks objectAtIndex:indexPath.row];
+    cell.textLabel.text = item;
+    
+    return cell;
+}
+
 #pragma mark - Actions
+
 - (void)addTasks:(id)sender
 {
     // Get the task
@@ -70,13 +99,19 @@
     }
     
     // Log text to console
-    NSLog(@"Task entered: %@", text);
+    //NSLog(@"Task entered: %@", text);
+    // add task object to task array
+    [self.tasks addObject:text];
+    
+    // Refresh table so that new items show up
+    [self.taskTable reloadData];
     
     // Clear out the text field
     [self.taskField setText:@""];
     // Dismiss the Keyboard
     [self.taskField resignFirstResponder];
 }
+
 
 
 

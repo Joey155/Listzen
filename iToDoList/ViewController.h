@@ -8,7 +8,7 @@
 #import <UIKit/UIKit.h>
 
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <UITableViewDataSource>
 
 @property (nonatomic) UITableView *taskTable;
 @property (nonatomic) UITextField *taskField;
