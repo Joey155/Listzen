@@ -48,9 +48,11 @@
     self.insertButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     self.insertButton.frame = buttonFrame;
     
-    //Give the button a title
-    [self.insertButton setTitle:@"Insert"
-                       forState:UIControlStateNormal];
+    // Give the button a title
+    // disable highlighting effect
+    UIImage *image = [UIImage systemImageNamed:@"plus"];
+    [self.insertButton setImage:image forState:UIControlStateNormal];
+    self.insertButton.adjustsImageWhenHighlighted = NO;
     
     // Set target and action for the insert button
     [self.insertButton addTarget:self
@@ -86,6 +88,25 @@
     
     return cell;
 }
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(nonnull NSIndexPath *)indexPath
+{
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(nonnull NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete)
+    {
+    
+        // Remove deleted task from data source
+        // This is specific for an NSMutableArray data source
+        [self.tasks removeObjectAtIndex:indexPath.row];
+        [self.taskTable reloadData];
+    }
+}
+
+
 
 #pragma mark - Actions
 
