@@ -27,41 +27,45 @@
     // CGRectMake() creates a CGRect from (x, y, width, height)
     CGRect winFrame = [[UIScreen mainScreen] bounds];
     CGRect tableFrame = CGRectMake(0, 100, winFrame.size.width, winFrame.size.height-100);
-    CGRect fieldFrame = CGRectMake(20, 40, 200, 31);
-    CGRect buttonFrame = CGRectMake(228, 40, 72, 31);
+    CGRect fieldFrame = CGRectMake(20, 50, 200, 31);
+    CGRect buttonFrame = CGRectMake(228, 30, 70, 70);
     
     //create and configure the UITableView instance
-    self.taskTable = [[UITableView alloc] initWithFrame:tableFrame
-                                                  style: UITableViewStylePlain];
-    self.taskTable.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.taskTable.dataSource = self;
+    UITableView *tableForTasks = [[UITableView alloc] initWithFrame:tableFrame
+                                                              style: UITableViewStylePlain];
+    _taskTable = tableForTasks;
+    [tableForTasks setSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
+    [tableForTasks setDataSource:self];
     
-    //Tell the table view which class to instantiate whenever it needs to create a new cell
-    [self.taskTable registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
+    // Tell the table view which class to instantiate
+    // whenever it needs to create a cell
+    [tableForTasks registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
     
-    //Create and configure the UITextField instance where new tasks will be entered00
-    self.taskField = [[UITextField alloc] initWithFrame:fieldFrame];
-    self.taskField.borderStyle = UITextBorderStyleRoundedRect;
-    self.taskField.placeholder = @"Type a task, tap insert";
+    //Create and configure the UITextField instance where new tasks will be entered
+    UITextField *textTaskField = [[UITextField alloc] initWithFrame:fieldFrame];
+    _taskField = textTaskField;
+    [textTaskField setBorderStyle:UITextBorderStyleRoundedRect];
+    [textTaskField setPlaceholder:@"Type a task, tap add"];
     
     //Create and configure the UIButton instance
-    self.insertButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    self.insertButton.frame = buttonFrame;
+    UIButton *plusButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    _insertButton = plusButton;
+    [plusButton setFrame:buttonFrame];
     
     // Give the button a title
     // disable highlighting effect
     UIImage *image = [UIImage systemImageNamed:@"plus"];
-    [self.insertButton setImage:image forState:UIControlStateNormal];
-    self.insertButton.adjustsImageWhenHighlighted = NO;
+    [plusButton setImage:image forState:UIControlStateNormal];
+    [plusButton setAdjustsImageWhenHighlighted:NO];
     
     // Set target and action for the insert button
-    [self.insertButton addTarget:self
-                          action:@selector(addTasks:)
-                forControlEvents:UIControlEventTouchUpInside];
+    [plusButton addTarget:self
+                  action:@selector(addTasks:)
+        forControlEvents:UIControlEventTouchUpInside];
     
-    [self.view addSubview: self.taskTable];
-    [self.view addSubview: self.taskField];
-    [self.view addSubview: self.insertButton];
+    [self.view addSubview: tableForTasks];
+    [self.view addSubview: textTaskField];
+    [self.view addSubview: plusButton];
     
 }
 
@@ -72,18 +76,18 @@
     // Because this table view only has one section
     // the number of rows in it will just be the number items
     // In the task array.
-    return [self.tasks count];
+    return [[self tasks] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
     // Check for and reuse an existing cell or create a new one if there isn't
-    UITableViewCell *cell = [self.taskTable dequeueReusableCellWithIdentifier:@"Cell"];
+    UITableViewCell *cell = [[self taskTable] dequeueReusableCellWithIdentifier:@"Cell"];
     
     // configure the cell based on the model object.
     // In this case I am using am using an array
     // tasks is an NSMutableArray Object
-    NSString *item = [self.tasks objectAtIndex:indexPath.row];
+    NSString *item = [[self tasks] objectAtIndex:indexPath.row];
     cell.textLabel.text = item;
     
     return cell;
@@ -101,8 +105,8 @@
     
         // Remove deleted task from data source
         // This is specific for an NSMutableArray data source
-        [self.tasks removeObjectAtIndex:indexPath.row];
-        [self.taskTable reloadData];
+        [[self tasks] removeObjectAtIndex:indexPath.row];
+        [[self taskTable] reloadData];
     }
 }
 
@@ -113,7 +117,7 @@
 - (void)addTasks:(id)sender
 {
     // Get the task
-    NSString *text = [self.taskField text];
+    NSString *text = [[self taskField] text];
     // Quit here if taskField is empty
     if ([text length] == 0) {
         return;
@@ -122,19 +126,15 @@
     // Log text to console
     //NSLog(@"Task entered: %@", text);
     // add task object to task array
-    [self.tasks addObject:text];
+    [[self tasks] addObject:text];
     
     // Refresh table so that new items show up
-    [self.taskTable reloadData];
+    [[self taskTable] reloadData];
     
     // Clear out the text field
-    [self.taskField setText:@""];
+    [[self taskField] setText:@""];
     // Dismiss the Keyboard
-    [self.taskField resignFirstResponder];
+    [[self taskField] resignFirstResponder];
 }
-
-
-
-
 
 @end
