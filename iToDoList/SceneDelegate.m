@@ -6,6 +6,7 @@
 //
 
 #import "SceneDelegate.h"
+#import "ViewController.h"
 
 @interface SceneDelegate ()
 
@@ -18,6 +19,53 @@
     // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
     // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
     // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
+    UIWindowScene *windowScene = (UIWindowScene*) scene;
+    CGRect winFrame = [[UIScreen mainScreen] bounds];
+    _window = [[UIWindow alloc] initWithFrame:winFrame];
+    ViewController* initialViewController = [[ViewController alloc] init];
+    UINavigationController* navController = [[UINavigationController alloc]
+                                             initWithRootViewController:initialViewController];
+    _window.rootViewController = navController;
+    [_window makeKeyAndVisible];
+    _window.windowScene = windowScene;
+    
+    // Define the frame rectangles of the three UI elements
+    // CGRectMake() creates a CGRect from (x, y, width, height)
+    CGRect tableFrame = CGRectMake(0, 100, winFrame.size.width, winFrame.size.height-100);
+    CGRect fieldFrame = CGRectMake(20, 40, 200, 31);
+    CGRect buttonFrame = CGRectMake(228, 40, 72, 31);
+    
+    //create and configure the UITableView instance
+    self.taskTable = [[UITableView alloc] initWithFrame:tableFrame
+                                                  style: UITableViewStylePlain];
+    self.taskTable.separatorStyle = UITableViewCellSeparatorStyleNone;
+    
+    //Tell the table view which class to instantiate whenever it needs to create a new cell
+    [self.taskTable registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
+    
+    //Create and configure the UITextField instance where new tasks will be entered
+    self.taskField = [[UITextField alloc] initWithFrame:fieldFrame];
+    self.taskField.borderStyle = UITextBorderStyleRoundedRect;
+    self.taskField.placeholder = @"Type a task, tap insert";
+    
+    //Create and configure the UIButton instance
+    self.insertButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    self.insertButton.frame = buttonFrame;
+    
+    //Give the button a title
+    [self.insertButton setTitle:@"Insert"
+                       forState:UIControlStateNormal];
+    
+    // Set target and action for the insert button
+    [self.insertButton addTarget:self
+                          action:@selector(addTasks:)
+                forControlEvents:UIControlEventTouchUpInside];
+    
+    //Add your three UI elements to the window
+    [_window addSubview:self.taskTable];
+    [_window addSubview:self.taskField];
+    [_window addSubview:self.insertButton];
+    _window.backgroundColor = [UIColor whiteColor];
 }
 
 
@@ -52,6 +100,13 @@
     // Use this method to save data, release shared resources, and store enough scene-specific state information
     // to restore the scene back to its current state.
 }
+
+#pragma mark - Actions
+- (void)addTasks:(id)sender
+{
+    // This method adds new data to the row in a tableview
+}
+
 
 
 @end
